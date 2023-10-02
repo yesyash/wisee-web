@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { Button, Input } from "@/components";
 
 const Homepage = () => {
@@ -6,7 +8,12 @@ const Homepage = () => {
       <h1 className="text-5xl font-semibold">Hello from RDS 👋</h1>
 
       <div className="w-sm space-y-4">
-        <Button>Click here</Button>
+        <Button asChild>
+          <Link href="/login">
+            Login
+          </Link>
+        </Button>
+
         <Input />
       </div>
     </div>
