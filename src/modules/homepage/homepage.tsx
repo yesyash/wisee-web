@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { Button, Input } from "@/components";
+import { Button } from "@/components";
 
 const Homepage = () => {
   return (
@@ -13,8 +13,6 @@ const Homepage = () => {
             Login
           </Link>
         </Button>
-
-        <Input />
       </div>
     </div>
   );
