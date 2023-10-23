@@ -1,0 +1,28 @@
+name: Lint Check
+
+on: 
+  pull_request:
+    branches: ["*"]
+
+jobs: 
+  lint-check:
+    runs-on: ubuntu-latest
+    name: Lint Check
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with: 
+          node-version: 18.17.1
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm i
+      
+      - run: npm run lint
+      
+
