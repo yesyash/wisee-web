@@ -42,7 +42,7 @@ describe('Button', () => {
         const buttonAsLink = screen.getByRole('link')
 
         expect(buttonAsLink).toBeInTheDocument()
-        expect(buttonAsLink).toHaveClass("bg-blue-600 text-stone-50 hover:bg-blue-700 active:bg-blue-800")
+        expect(buttonAsLink).toHaveClass("bg-blue-600 text-gray-50 hover:bg-blue-700 active:bg-blue-800 ")
         expect(buttonAsLink).toHaveAttribute('href', '/hello-world')
     })
 })
