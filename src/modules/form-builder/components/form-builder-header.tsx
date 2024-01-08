@@ -1,6 +1,6 @@
 import { Button } from "@/components"
 
-export const EditPageHeader = () => {
+export const FormBuilderHeader = () => {
     return (
         <header className="fixed inset-0 bg-white h-max">
             <div className="flex items-center max-w-screen-2xl px-6 py-2">

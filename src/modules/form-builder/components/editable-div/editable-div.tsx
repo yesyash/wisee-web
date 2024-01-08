@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from "react"
 
 import { cn } from "@/utils/classname"
 
-import { BlockTypeEnum, KeyCodeEnum } from "../../enums"
-import { useEditFormStore } from "../../store"
-import { TBlock } from "../../types/edit-form-types"
-import { setBlockInFocus } from "../../utils"
+import { BlockTypeEnum, KeyCodeEnum } from "../../enums/form-builder.enum"
+import { useFormBuilderStore } from "../../store"
+import { TBlock } from "../../types/form-builder.types"
+import { setBlockInFocus } from "../../utils/form-builder.utils"
 
 type EditableDivProps = Pick<React.DOMAttributes<HTMLDivElement>, "onInput" | "onKeyDown"> & TBlock & {
     placeholder?: string
@@ -17,23 +17,11 @@ export const EditableDiv = ({ id, type, payload, className, placeholder, onInput
     const ref = useRef<HTMLDivElement>(null)
     const [prevKey, setPrevKey] = useState("")
 
-    const { totalBlocks, addBlock, deleteBlock } = useEditFormStore((state) => ({
+    const { totalBlocks, addBlock, deleteBlock } = useFormBuilderStore((state) => ({
         totalBlocks: state.blocks.length,
         addBlock: state.addBlock,
         deleteBlock: state.removeBlock,
     }))
-
-    useEffect(() => {
-        const inputRef = ref.current
-        if (!inputRef) return
-
-        if (type === BlockTypeEnum.TEXT) {
-            inputRef.innerHTML = payload.data
-        }
-
-        inputRef.innerHTML = payload.placeholder
-
-    }, [])
 
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -82,6 +70,18 @@ export const EditableDiv = ({ id, type, payload, className, placeholder, onInput
         onKeyDown && onKeyDown(e)
         setPrevKey(e.key)
     }
+
+    useEffect(() => {
+        const inputRef = ref.current
+        if (!inputRef) return
+
+        if (type === BlockTypeEnum.TEXT) {
+            inputRef.innerHTML = payload.data
+        }
+
+        inputRef.innerHTML = payload.placeholder
+
+    }, [])
 
     return (
         <div className="relative">
