@@ -1,4 +1,4 @@
-import { BlockTypeEnum } from "../enums";
+import { BlockTypeEnum } from "../enums/form-builder.enum";
 
 export type TBlock = {
   id: string;

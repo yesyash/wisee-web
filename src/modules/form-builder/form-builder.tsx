@@ -1,29 +1,23 @@
 import Head from "next/head"
 
-import { EditPageHeader } from "./components"
 import { EditableDiv } from "./components/editable-div"
-import { BlockTypeEnum, EditFormModeEnum } from "./enums"
-import { useEditFormStore } from "./store"
+import { FormBuilderHeader } from "./components/form-builder-header"
+import { BlockTypeEnum } from "./enums/form-builder.enum"
+import { useFormBuilderStore } from "./store"
 
-type PageProps = {
-    mode: EditFormModeEnum
-}
-
-export const Edit = ({ mode }: PageProps) => {
-    const { blocks } = useEditFormStore((state) => ({
+export const FormBuilder = () => {
+    const { blocks } = useFormBuilderStore((state) => ({
         blocks: state.blocks,
         updateBlock: state.updateBlock
     }))
 
-    const pageTitle = mode === EditFormModeEnum.CREATE_WITHOUT_LOGIN ? "Create form" : "Edit form"
-
     return (
-        <>
+        <div>
             <Head>
-                <title>{pageTitle} — {process.env.NEXT_PUBLIC_APP_NAME}</title>
+                <title>Create form - {process.env.NEXT_PUBLIC_APP_NAME}</title>
             </Head>
 
-            <EditPageHeader />
+            <FormBuilderHeader />
 
             <main>
                 <div className="pt-14 h-44 w-full"></div>
@@ -41,6 +35,6 @@ export const Edit = ({ mode }: PageProps) => {
 
                 </div>
             </main>
-        </>
+        </div>
     )
 }

@@ -1,8 +1,8 @@
 import { create } from "zustand"
 import { devtools } from "zustand/middleware"
 
-import { BlockTypeEnum } from "../enums"
-import { TBlock } from "../types/edit-form-types"
+import { BlockTypeEnum } from "../enums/form-builder.enum"
+import { TBlock } from "../types/form-builder.types"
 
 const DEFAULT_BLOCKS: TBlock[] = [
     { id: "form_title", payload: { data: '', placeholder: '' }, type: BlockTypeEnum.FORM_TITLE },
@@ -16,7 +16,7 @@ type TBlocksStore = {
     updateBlock: (blockId: string, payload: TBlock['payload']) => void
 }
 
-export const useEditFormStore = create<TBlocksStore>()(devtools((set) => ({
+export const useFormBuilderStore = create<TBlocksStore>()(devtools((set) => ({
     blocks: DEFAULT_BLOCKS,
     editBlock: (block) => set((state) => {
         const blockIndex = state.blocks.findIndex((b) => b.id === block.id)
@@ -55,4 +55,4 @@ export const useEditFormStore = create<TBlocksStore>()(devtools((set) => ({
 
         return { blocks }
     })
-}), { enabled: true, name: "useFormStore" })) // TODO: @yesyash - Disable the devtools middleware in production
+}), { enabled: true, name: "useFormBuilderStore" })) // TODO: @yesyash - Disable the devtools middleware in production
