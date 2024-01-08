@@ -1,10 +1,9 @@
 export enum EditFormModeEnum {
-  PREVIEW = "PREVIEW",
   EDIT = "EDIT",
-  CREATE_WITHOUT_LOGIN = "CREATE_WITHOUT_LOGIN",
+  PREVIEW = "PREVIEW",
 }
 
-export enum KeyCodeEnum {
+export enum KeyCodesEnum {
   SHIFT = "Shift",
   ENTER = "Enter",
   BACKSPACE = "Backspace",
@@ -12,10 +11,13 @@ export enum KeyCodeEnum {
   ARROW_DOWN = "ArrowDown",
 }
 
-export enum BlockTypeEnum {
-  FORM_TITLE = "FORM_TITLE",
+export enum BlockTypesEnum {
   TEXT = "TEXT",
-  EMAIL = "EMAIL",
-  SHORT_TEXT = "SHORT_TEXT",
-  LONG_TEXT = "LONG_TEXT",
+  TEXTAREA = "TEXTAREA",
+  CODEBLOCK = "CODEBLOCK",
+  INPUT_TEXT = "INPUT_TEXT",
+  FORM_TITLE = "FORM_TITLE",
+  INPUT_EMAIL = "INPUT_EMAIL",
+  INPUT_NUMBER = "INPUT_NUMBER",
+  MULTI_CHOICE_OPTION = "MULTI_CHOICE_OPTIONS",
 }

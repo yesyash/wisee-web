@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react"
 
 import { cn } from "@/utils/classname"
 
-import { BlockTypeEnum, KeyCodeEnum } from "../../enums/form-builder.enum"
+import { BlockTypesEnum, KeyCodesEnum } from "../../enums/form-builder.enum"
 import { useFormBuilderStore } from "../../store"
 import { TBlock } from "../../types/form-builder.types"
 import { setBlockInFocus } from "../../utils/form-builder.utils"
@@ -26,7 +26,7 @@ export const EditableDiv = ({ id, type, payload, className, placeholder, onInput
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
         const currentValue = e.currentTarget.innerText
-        const isPrevKeyShift = prevKey === KeyCodeEnum.SHIFT
+        const isPrevKeyShift = prevKey === KeyCodesEnum.SHIFT
 
         const elements = document.querySelectorAll("[contenteditable]")
         const currentElementIndex = Array.from(elements).findIndex((el) => el.id === id);
@@ -35,7 +35,7 @@ export const EditableDiv = ({ id, type, payload, className, placeholder, onInput
             return
         }
 
-        if (e.key === KeyCodeEnum.ENTER && !isPrevKeyShift) {
+        if (e.key === KeyCodesEnum.ENTER && !isPrevKeyShift) {
             e.preventDefault()
             const newBlockPosition = currentElementIndex + 1
 
@@ -44,7 +44,7 @@ export const EditableDiv = ({ id, type, payload, className, placeholder, onInput
             return
         }
 
-        if (currentValue?.length === 0 && e.key === KeyCodeEnum.BACKSPACE && type !== BlockTypeEnum.FORM_TITLE) {
+        if (currentValue?.length === 0 && e.key === KeyCodesEnum.BACKSPACE && type !== BlockTypesEnum.FORM_TITLE) {
             e.preventDefault()
             const previousElementIndex = currentElementIndex === 0 ? 0 : currentElementIndex - 1
 
@@ -53,14 +53,14 @@ export const EditableDiv = ({ id, type, payload, className, placeholder, onInput
             deleteBlock(id)
         }
 
-        if (e.key === KeyCodeEnum.ARROW_UP) {
+        if (e.key === KeyCodesEnum.ARROW_UP) {
             e.preventDefault()
             const newBlockPosition = currentElementIndex === 0 ? 0 : currentElementIndex - 1
 
             setBlockInFocus(newBlockPosition)
         }
 
-        if (e.key === KeyCodeEnum.ARROW_DOWN) {
+        if (e.key === KeyCodesEnum.ARROW_DOWN) {
             e.preventDefault()
             const newBlockPosition = currentElementIndex === totalBlocks - 1 ? currentElementIndex : currentElementIndex + 1
 
@@ -75,7 +75,7 @@ export const EditableDiv = ({ id, type, payload, className, placeholder, onInput
         const inputRef = ref.current
         if (!inputRef) return
 
-        if (type === BlockTypeEnum.TEXT) {
+        if (type === BlockTypesEnum.TEXT) {
             inputRef.innerHTML = payload.data
         }
 
@@ -96,7 +96,7 @@ export const EditableDiv = ({ id, type, payload, className, placeholder, onInput
                     "text-base relative outline-none whitespace-pre-wrap break-words text-stone-900 caret:text-stone-900 cursor-text",
                     "before:content-[attr(placeholder)] before:text-stone-400 before:absolute",
                     "focus:empty:before:block before:hidden",
-                    type === BlockTypeEnum.FORM_TITLE && "pb-8",
+                    type === BlockTypesEnum.FORM_TITLE && "pb-8",
                     className
                 )}
                 onKeyDown={handleKeyDown}

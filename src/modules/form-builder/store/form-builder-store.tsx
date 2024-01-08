@@ -1,11 +1,11 @@
 import { create } from "zustand"
 import { devtools } from "zustand/middleware"
 
-import { BlockTypeEnum } from "../enums/form-builder.enum"
+import { BlockTypesEnum } from "../enums/form-builder.enum"
 import { TBlock } from "../types/form-builder.types"
 
 const DEFAULT_BLOCKS: TBlock[] = [
-    { id: "form_title", payload: { data: '', placeholder: '' }, type: BlockTypeEnum.FORM_TITLE },
+    { id: "form_title", payload: { data: '', placeholder: '' }, type: BlockTypesEnum.FORM_TITLE },
 ]
 
 type TBlocksStore = {
@@ -34,7 +34,7 @@ export const useFormBuilderStore = create<TBlocksStore>()(devtools((set) => ({
         const newBlock = {
             id: Math.random().toString(),
             payload: { data: '', placeholder: '' },
-            type: BlockTypeEnum.TEXT,
+            type: BlockTypesEnum.TEXT,
         }
 
         const blocks = [...state.blocks]

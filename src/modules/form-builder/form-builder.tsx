@@ -2,7 +2,7 @@ import Head from "next/head"
 
 import { EditableDiv } from "./components/editable-div"
 import { FormBuilderHeader } from "./components/form-builder-header"
-import { BlockTypeEnum } from "./enums/form-builder.enum"
+import { BlockTypesEnum } from "./enums/form-builder.enum"
 import { useFormBuilderStore } from "./store"
 
 export const FormBuilder = () => {
@@ -28,8 +28,8 @@ export const FormBuilder = () => {
                             id={block.id}
                             payload={block.payload}
                             type={block.type}
-                            className={block.type === BlockTypeEnum.FORM_TITLE ? "text-4xl font-bold empty:before:block" : "mb-2"}
-                            placeholder={block.type === BlockTypeEnum.FORM_TITLE ? "Form title" : "Type something..."}
+                            className={block.type === BlockTypesEnum.FORM_TITLE ? "text-4xl font-bold empty:before:block" : "mb-2"}
+                            placeholder={block.type === BlockTypesEnum.FORM_TITLE ? "Form title" : "Type something..."}
                         />
                     ))}
 
