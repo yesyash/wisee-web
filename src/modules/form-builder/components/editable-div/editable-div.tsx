@@ -6,6 +6,7 @@ import { BlockTypesEnum, KeyCodesEnum } from "../../enums/form-builder.enum"
 import { useFormBuilderStore } from "../../store"
 import { TBlock } from "../../types/form-builder.types"
 import { setBlockInFocus } from "../../utils/form-builder.utils"
+import { FormBuilderMenu } from "../form-builder-menu"
 
 type EditableDivProps = Pick<React.DOMAttributes<HTMLDivElement>, "onInput" | "onKeyDown"> & TBlock & {
     placeholder?: string
@@ -16,13 +17,16 @@ type EditableDivProps = Pick<React.DOMAttributes<HTMLDivElement>, "onInput" | "o
 export const EditableDiv = ({ id, type, payload, className, placeholder, onInput, onKeyDown }: EditableDivProps) => {
     const ref = useRef<HTMLDivElement>(null)
     const [prevKey, setPrevKey] = useState("")
+    const [showQuestionsMenu, setShowQuestionsMenu] = useState(false)
 
-    const { totalBlocks, addBlock, deleteBlock } = useFormBuilderStore((state) => ({
+    const { totalBlocks, addBlock, deleteBlock, updateBlock } = useFormBuilderStore((state) => ({
         totalBlocks: state.blocks.length,
         addBlock: state.addBlock,
         deleteBlock: state.removeBlock,
+        updateBlock: state.updateBlock
     }))
 
+    const isFormTitle = type === BlockTypesEnum.FORM_TITLE
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
         const currentValue = e.currentTarget.innerText
@@ -83,8 +87,18 @@ export const EditableDiv = ({ id, type, payload, className, placeholder, onInput
 
     }, [])
 
+    useEffect(() => {
+        if (payload.data.length === 1 && payload.data[0] === "/" && !isFormTitle) {
+            setShowQuestionsMenu(true)
+            return
+        } else if (setShowQuestionsMenu) {
+            setShowQuestionsMenu(false)
+        }
+    }, [payload.data, isFormTitle])
+
     return (
         <div className="relative">
+            {type}
             <div
                 ref={ref}
                 id={id}
@@ -101,7 +115,13 @@ export const EditableDiv = ({ id, type, payload, className, placeholder, onInput
                 )}
                 onKeyDown={handleKeyDown}
                 onInput={onInput}
+                dangerouslySetInnerHTML={{ __html: payload.data }}
             />
+
+            {showQuestionsMenu && <FormBuilderMenu onClick={(blockType) => {
+                setShowQuestionsMenu(false)
+                updateBlock({ blockId: id, payload: { data: "" }, type: blockType })
+            }} />}
         </div>
     )
 }

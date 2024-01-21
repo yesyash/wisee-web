@@ -13,7 +13,9 @@ type TBlocksStore = {
     editBlock: (block: TBlock) => void
     addBlock: (position: number) => void
     removeBlock: (blockId: string) => void
-    updateBlock: (blockId: string, payload: TBlock['payload']) => void
+    updateBlock: ({ blockId, payload, type }: {
+        blockId: string, payload?: { data: TBlock['payload']['data'] }, type?: TBlock['type']
+    }) => void
 }
 
 export const useFormBuilderStore = create<TBlocksStore>()(devtools((set) => ({
@@ -43,7 +45,7 @@ export const useFormBuilderStore = create<TBlocksStore>()(devtools((set) => ({
         return { blocks }
     }),
     removeBlock: (blockId) => set((state) => ({ blocks: state.blocks.filter(b => b.id !== blockId) })),
-    updateBlock: (blockId, payload) => set((state) => {
+    updateBlock: ({ blockId, payload, type }) => set((state) => {
         const blockIndex = state.blocks.findIndex((b) => b.id === blockId)
 
         if (blockIndex === -1) {
@@ -51,7 +53,14 @@ export const useFormBuilderStore = create<TBlocksStore>()(devtools((set) => ({
         }
 
         const blocks = [...state.blocks]
-        blocks[blockIndex].payload = payload
+
+        if (type) {
+            blocks[blockIndex].type = type
+        }
+
+        if (payload) {
+            blocks[blockIndex].payload = { placeholder: blocks[blockIndex].payload.placeholder, data: payload.data }
+        }
 
         return { blocks }
     })

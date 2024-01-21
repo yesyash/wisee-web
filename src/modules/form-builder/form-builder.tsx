@@ -6,7 +6,7 @@ import { BlockTypesEnum } from "./enums/form-builder.enum"
 import { useFormBuilderStore } from "./store"
 
 export const FormBuilder = () => {
-    const { blocks } = useFormBuilderStore((state) => ({
+    const { blocks, updateBlock } = useFormBuilderStore((state) => ({
         blocks: state.blocks,
         updateBlock: state.updateBlock
     }))
@@ -14,7 +14,7 @@ export const FormBuilder = () => {
     return (
         <div>
             <Head>
-                <title>Create form - {process.env.NEXT_PUBLIC_APP_NAME}</title>
+                <title>Create form</title>
             </Head>
 
             <FormBuilderHeader />
@@ -30,6 +30,7 @@ export const FormBuilder = () => {
                             type={block.type}
                             className={block.type === BlockTypesEnum.FORM_TITLE ? "text-4xl font-bold empty:before:block" : "mb-2"}
                             placeholder={block.type === BlockTypesEnum.FORM_TITLE ? "Form title" : "Type something..."}
+                            onInput={(e) => updateBlock({ blockId: block.id, payload: { data: e.currentTarget.innerText } })}
                         />
                     ))}
 
