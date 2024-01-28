@@ -1,23 +1,22 @@
-import { useEffect, useRef, useState } from "react"
+import { FormEvent, useEffect, useRef, useState } from "react"
 
 import { cn } from "@/utils/classname"
 
 import { BlockTypesEnum, KeyCodesEnum } from "../../enums/form-builder.enum"
-import { useFormBuilderStore } from "../../store"
+import { TBlocksStore, useFormBuilderStore } from "../../store"
 import { TBlock } from "../../types/form-builder.types"
-import { setBlockInFocus } from "../../utils/form-builder.utils"
+import { setBlockInFocus, setCursorToEnd } from "../../utils/form-builder.utils"
 import { FormBuilderMenu } from "../form-builder-menu"
 
-type EditableDivProps = Pick<React.DOMAttributes<HTMLDivElement>, "onInput" | "onKeyDown"> & TBlock & {
-    placeholder?: string
+type EditableDivProps = Pick<React.DOMAttributes<HTMLDivElement>, | "onKeyDown"> & {
     className?: string
-    payload: TBlock['payload']
+    value: TBlock
+    onChange: TBlocksStore['updateBlock']
 }
 
-export const EditableDiv = ({ id, type, payload, className, placeholder, onInput, onKeyDown }: EditableDivProps) => {
+export const EditableDiv = ({ value, className, onChange, onKeyDown }: EditableDivProps) => {
     const ref = useRef<HTMLDivElement>(null)
     const [prevKey, setPrevKey] = useState("")
-    const [showQuestionsMenu, setShowQuestionsMenu] = useState(false)
 
     const { totalBlocks, addBlock, deleteBlock, updateBlock } = useFormBuilderStore((state) => ({
         totalBlocks: state.blocks.length,
@@ -26,14 +25,18 @@ export const EditableDiv = ({ id, type, payload, className, placeholder, onInput
         updateBlock: state.updateBlock
     }))
 
-    const isFormTitle = type === BlockTypesEnum.FORM_TITLE
+    const innerText = value.payload.data
+    const showBlockTypeMenu = innerText.length === 1 && innerText[0] === "/"
+
+    const isFormTitle = value.type === BlockTypesEnum.FORM_TITLE
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
         const currentValue = e.currentTarget.innerText
         const isPrevKeyShift = prevKey === KeyCodesEnum.SHIFT
 
+
         const elements = document.querySelectorAll("[contenteditable]")
-        const currentElementIndex = Array.from(elements).findIndex((el) => el.id === id);
+        const currentElementIndex = Array.from(elements).findIndex((el) => el.id === value.id);
 
         if (currentElementIndex === -1) {
             return
@@ -48,13 +51,12 @@ export const EditableDiv = ({ id, type, payload, className, placeholder, onInput
             return
         }
 
-        if (currentValue?.length === 0 && e.key === KeyCodesEnum.BACKSPACE && type !== BlockTypesEnum.FORM_TITLE) {
+        if (currentValue?.length === 0 && e.key === KeyCodesEnum.BACKSPACE && value.type !== BlockTypesEnum.FORM_TITLE) {
             e.preventDefault()
             const previousElementIndex = currentElementIndex === 0 ? 0 : currentElementIndex - 1
 
             setBlockInFocus(previousElementIndex)
-
-            deleteBlock(id)
+            deleteBlock(value.id)
         }
 
         if (e.key === KeyCodesEnum.ARROW_UP) {
@@ -75,53 +77,59 @@ export const EditableDiv = ({ id, type, payload, className, placeholder, onInput
         setPrevKey(e.key)
     }
 
+    const handleInput = (e: FormEvent<HTMLDivElement>) => {
+        const currentElement = e.currentTarget
+        const currentValue = currentElement.innerHTML
+
+        onChange({ blockId: value.id, payload: { data: currentValue } })
+    }
+
+    const updateBlockTypeFromMenu = (blockType: BlockTypesEnum) => {
+        const currentElement = ref.current
+        if (!currentElement) return
+
+        currentElement.innerHTML = ""
+        setCursorToEnd(currentElement)
+        updateBlock({ blockId: value.id, payload: { data: "" }, type: blockType })
+    }
+
+    /**
+     * Set initial value to the block
+     * */
     useEffect(() => {
-        const inputRef = ref.current
-        if (!inputRef) return
+        const currentElement = ref.current
 
-        if (type === BlockTypesEnum.TEXT) {
-            inputRef.innerHTML = payload.data
-        }
-
-        inputRef.innerHTML = payload.placeholder
-
-    }, [])
-
-    useEffect(() => {
-        if (payload.data.length === 1 && payload.data[0] === "/" && !isFormTitle) {
-            setShowQuestionsMenu(true)
+        if (!currentElement) {
             return
-        } else if (setShowQuestionsMenu) {
-            setShowQuestionsMenu(false)
         }
-    }, [payload.data, isFormTitle])
+
+        currentElement.innerHTML = value.payload.data
+        setCursorToEnd(currentElement)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     return (
         <div className="relative">
-            {type}
+            {value.type}
             <div
                 ref={ref}
-                id={id}
+                id={value.id}
                 contentEditable
                 tabIndex={0}
                 autoFocus
-                placeholder={placeholder}
+                placeholder={value.payload.placeholder}
                 className={cn(
-                    "text-base relative outline-none whitespace-pre-wrap break-words text-stone-900 caret:text-stone-900 cursor-text",
+                    "text-base relative outline-none whitespace-pre-wrap break-words text-stone-900 caret:text-stone-900 cursor-text mb-2",
                     "before:content-[attr(placeholder)] before:text-stone-400 before:absolute",
                     "focus:empty:before:block before:hidden",
-                    type === BlockTypesEnum.FORM_TITLE && "pb-8",
+                    isFormTitle && "pb-8 text-4xl font-bold empty:before:block",
                     className
                 )}
                 onKeyDown={handleKeyDown}
-                onInput={onInput}
-                dangerouslySetInnerHTML={{ __html: payload.data }}
+                onInput={(e) => handleInput(e)}
             />
 
-            {showQuestionsMenu && <FormBuilderMenu onClick={(blockType) => {
-                setShowQuestionsMenu(false)
-                updateBlock({ blockId: id, payload: { data: "" }, type: blockType })
-            }} />}
+            {showBlockTypeMenu && <FormBuilderMenu onClick={updateBlockTypeFromMenu} />}
         </div>
     )
 }

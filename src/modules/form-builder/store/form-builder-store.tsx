@@ -1,14 +1,23 @@
+import { nanoid } from 'nanoid'
 import { create } from "zustand"
 import { devtools } from "zustand/middleware"
 
 import { BlockTypesEnum } from "../enums/form-builder.enum"
 import { TBlock } from "../types/form-builder.types"
 
-const DEFAULT_BLOCKS: TBlock[] = [
-    { id: "form_title", payload: { data: '', placeholder: '' }, type: BlockTypesEnum.FORM_TITLE },
-]
+const DEFAULT_FORM_TITLE: () => TBlock = () => ({
+    id: nanoid(),
+    payload: { data: "", placeholder: 'Form title' },
+    type: BlockTypesEnum.FORM_TITLE
+})
 
-type TBlocksStore = {
+const DEFAULT_NEW_BLOCK: () => TBlock = () => ({
+    id: nanoid(),
+    payload: { data: "", placeholder: "Type / to see options..." },
+    type: BlockTypesEnum.TEXT,
+})
+
+export type TBlocksStore = {
     blocks: TBlock[]
     editBlock: (block: TBlock) => void
     addBlock: (position: number) => void
@@ -19,7 +28,7 @@ type TBlocksStore = {
 }
 
 export const useFormBuilderStore = create<TBlocksStore>()(devtools((set) => ({
-    blocks: DEFAULT_BLOCKS,
+    blocks: [DEFAULT_FORM_TITLE()],
     editBlock: (block) => set((state) => {
         const blockIndex = state.blocks.findIndex((b) => b.id === block.id)
 
@@ -33,14 +42,8 @@ export const useFormBuilderStore = create<TBlocksStore>()(devtools((set) => ({
         return { blocks }
     }),
     addBlock: (position) => set((state) => {
-        const newBlock = {
-            id: Math.random().toString(),
-            payload: { data: '', placeholder: '' },
-            type: BlockTypesEnum.TEXT,
-        }
-
         const blocks = [...state.blocks]
-        blocks.splice(position, 0, newBlock)
+        blocks.splice(position, 0, DEFAULT_NEW_BLOCK())
 
         return { blocks }
     }),

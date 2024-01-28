@@ -1,9 +1,10 @@
+import dynamic from "next/dynamic"
 import Head from "next/head"
 
-import { EditableDiv } from "./components/editable-div"
 import { FormBuilderHeader } from "./components/form-builder-header"
-import { BlockTypesEnum } from "./enums/form-builder.enum"
 import { useFormBuilderStore } from "./store"
+const EditableDiv = dynamic(() => import('./components/editable-div').then(mod => mod.EditableDiv), { loading: () => <p>loading...</p>, ssr: false })
+
 
 export const FormBuilder = () => {
     const { blocks, updateBlock } = useFormBuilderStore((state) => ({
@@ -25,12 +26,8 @@ export const FormBuilder = () => {
                     {blocks.map(block => (
                         <EditableDiv
                             key={block.id}
-                            id={block.id}
-                            payload={block.payload}
-                            type={block.type}
-                            className={block.type === BlockTypesEnum.FORM_TITLE ? "text-4xl font-bold empty:before:block" : "mb-2"}
-                            placeholder={block.type === BlockTypesEnum.FORM_TITLE ? "Form title" : "Type something..."}
-                            onInput={(e) => updateBlock({ blockId: block.id, payload: { data: e.currentTarget.innerText } })}
+                            value={block}
+                            onChange={(data) => updateBlock(data)}
                         />
                     ))}
 
