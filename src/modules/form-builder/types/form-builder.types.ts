@@ -5,6 +5,6 @@ export type TBlock = {
   type: BlockTypesEnum;
   payload: {
     data: string;
-    placeholder: string;
+    placeholder?: string;
   };
 };

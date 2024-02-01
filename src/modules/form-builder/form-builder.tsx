@@ -7,8 +7,11 @@ const EditableDiv = dynamic(() => import('./components/editable-div').then(mod =
 
 
 export const FormBuilder = () => {
-    const { blocks, updateBlock } = useFormBuilderStore((state) => ({
+    const { blocks, totalBlocks, addBlock, deleteBlock, updateBlock } = useFormBuilderStore((state) => ({
         blocks: state.blocks,
+        addBlock: state.addBlock,
+        deleteBlock: state.removeBlock,
+        totalBlocks: state.blocks.length,
         updateBlock: state.updateBlock
     }))
 
@@ -27,6 +30,9 @@ export const FormBuilder = () => {
                         <EditableDiv
                             key={block.id}
                             value={block}
+                            addBlock={addBlock}
+                            deleteBlock={deleteBlock}
+                            totalBlocks={totalBlocks}
                             onChange={(data) => updateBlock(data)}
                         />
                     ))}
