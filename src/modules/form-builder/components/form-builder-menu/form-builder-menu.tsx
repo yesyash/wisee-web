@@ -26,7 +26,7 @@ type Props = {
 
 export const FormBuilderMenu = ({ onClick }: Props) => {
     return (
-        <div className="absolute top-full py-3">
+        <div data-test-id="formBuilderMenu" className="absolute top-full py-3">
             <div className="border border-gray-300 shadow-sm rounded-lg overflow-hidden">
                 {list.map(item =>
                     <Button

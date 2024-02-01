@@ -35,9 +35,6 @@ export const EditableDiv = ({ value, totalBlocks, addBlock, deleteBlock, classNa
         const elements = document.querySelectorAll("[contenteditable]");
         const currentElementIndex = Array.from(elements).findIndex((el) => el.id === value.id);
 
-        if (currentElementIndex === -1) {
-            return;
-        }
 
         if (e.key === KeyCodesEnum.ENTER && !isPrevKeyShift) {
             e.preventDefault();
@@ -82,6 +79,7 @@ export const EditableDiv = ({ value, totalBlocks, addBlock, deleteBlock, classNa
 
     const updateBlockTypeFromMenu = (blockType: BlockTypesEnum) => {
         const currentElement = ref.current;
+
         if (!currentElement) return;
 
         currentElement.innerHTML = "";
