@@ -1,5 +1,9 @@
 import '@testing-library/jest-dom'
-import { render, screen } from '@testing-library/react'
+import { skip } from 'node:test'
+
+import { useState } from 'react'
+
+import { render, screen, renderHook } from '@testing-library/react'
 import { userEvent } from "@testing-library/user-event"
 
 import { BlockTypesEnum } from '@/modules/form-builder/enums/form-builder.enum'
@@ -13,12 +17,19 @@ const BLOCK_TWO_TEXT = "block 2"
 const EDITABLE_DIV_NOT_FOUND_ERROR = "Editable div is not found"
 
 type TGetDefaultTextInputDataArgs = {
-    data?: string
     id?: string
+    data?: string
+    placeholder?: string
+    type?: BlockTypesEnum
 }
 
-const getDefaultTextInputData = ({ data, id }: TGetDefaultTextInputDataArgs = {}): TBlock => {
-    return { id: id ?? '1', payload: { data: data ?? "", placeholder: PLACEHOLDER }, type: BlockTypesEnum.TEXT }
+const getDefaultTextInputData = ({
+    id = "1",
+    data = "",
+    placeholder = PLACEHOLDER,
+    type = BlockTypesEnum.TEXT
+}: TGetDefaultTextInputDataArgs = {}): TBlock => {
+    return { id, payload: { data, placeholder }, type }
 }
 
 describe('EditableDiv', () => {
@@ -194,51 +205,91 @@ describe('EditableDiv', () => {
     })
 
     it("show menu if the user enters only / character", async () => {
+        const { result: { current: [value, setValue] } } = renderHook(() => useState(getDefaultTextInputData()))
+
         render(
             <EditableDiv
                 index={0}
+                value={value}
                 totalBlocks={1}
-                value={getDefaultTextInputData({ data: "/" })}
+                onChange={(data) => setValue(getDefaultTextInputData({ data: data.payload?.data, type: data.type }))
+                }
             />
         )
 
         const editableDiv = document.getElementById("1")
-        const menu = document.querySelector("[data-test-id='formBuilderMenu']")
 
         if (!editableDiv) {
             throw new Error(EDITABLE_DIV_NOT_FOUND_ERROR)
         }
 
         await userEvent.click(editableDiv)
+        await userEvent.type(editableDiv, "/")
+
+        expect(editableDiv).toHaveTextContent("/")
+
+        const menu = document.querySelector("[data-test-id='formBuilderMenu']")
         expect(menu).toBeInTheDocument()
     })
 
     it("should change the block type when user clicks on the menu", async () => {
-        const updateBlock = jest.fn()
+        const onChange = jest.fn()
 
         render(
             <EditableDiv
                 index={0}
+                value={getDefaultTextInputData()}
                 totalBlocks={1}
-                value={getDefaultTextInputData({ data: "/" })}
-                onChange={updateBlock}
+                onChange={(data) => onChange(data)}
             />
         )
 
         const editableDiv = document.getElementById("1")
-        const menu = document.querySelector("[data-test-id='formBuilderMenu']")
 
-        if (!editableDiv || !menu) {
+        if (!editableDiv) {
             throw new Error(EDITABLE_DIV_NOT_FOUND_ERROR)
         }
 
         await userEvent.click(editableDiv)
+        await userEvent.type(editableDiv, "/")
+
+        const menu = document.querySelector("[data-test-id='formBuilderMenu']")
         expect(menu).toBeInTheDocument()
 
         const textOption = screen.getByText("Email")
         expect(textOption).toBeInTheDocument()
+        screen.debug()
 
         await userEvent.click(textOption)
-        expect(updateBlock).toHaveBeenCalledTimes(1)
+        // we are checking the value of the second call because the first call is fired when user types / in the input
+        expect(onChange.mock.calls[1][0]['type']).toBe(BlockTypesEnum.INPUT_EMAIL)
+    })
+
+    it("show not show menu if the user enters only / character in form title", async () => {
+        const { result: { current: [value, setValue] } } = renderHook(() => useState(getDefaultTextInputData({ type: BlockTypesEnum.FORM_TITLE })))
+
+        render(
+            <EditableDiv
+                index={0}
+                value={value}
+                totalBlocks={1}
+                onChange={(data) => setValue(getDefaultTextInputData({ data: data.payload?.data, type: data.type }))
+                }
+            />
+        )
+
+        const editableDiv = document.getElementById("1")
+
+        if (!editableDiv) {
+            throw new Error(EDITABLE_DIV_NOT_FOUND_ERROR)
+        }
+
+        await userEvent.click(editableDiv)
+        await userEvent.type(editableDiv, "/")
+
+        expect(editableDiv).toHaveTextContent("/")
+
+        const menu = document.querySelector("[data-test-id='formBuilderMenu']")
+        expect(menu).not.toBeInTheDocument()
     })
 })

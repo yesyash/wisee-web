@@ -21,10 +21,9 @@ type EditableDivProps = Pick<React.DOMAttributes<HTMLDivElement>, "onKeyDown"> &
 export const EditableDiv = ({ value, index, totalBlocks, addBlock, deleteBlock, className, onChange, onKeyDown }: EditableDivProps) => {
     const ref = useRef<HTMLDivElement>(null);
     const [prevKey, setPrevKey] = useState("");
+    const [showBlocksMenu, setShowBlocksMenu] = useState(false);
 
-    const innerText = value.payload.data;
-    const showBlockTypeMenu = innerText.length === 1 && innerText[0] === "/";
-
+    // const innerText = value.payload.data;
     const isFormTitle = value.type === BlockTypesEnum.FORM_TITLE;
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -38,6 +37,7 @@ export const EditableDiv = ({ value, index, totalBlocks, addBlock, deleteBlock, 
             const newBlockPosition = index + 1;
 
             addBlock && addBlock(newBlockPosition);
+            setShowBlocksMenu(false)
             return;
         }
 
@@ -53,6 +53,7 @@ export const EditableDiv = ({ value, index, totalBlocks, addBlock, deleteBlock, 
             e.preventDefault();
             const newBlockPosition = index === 0 ? 0 : index - 1;
 
+            setShowBlocksMenu(false)
             setBlockInFocus(newBlockPosition);
         }
 
@@ -60,6 +61,7 @@ export const EditableDiv = ({ value, index, totalBlocks, addBlock, deleteBlock, 
             e.preventDefault();
             const newBlockPosition = index === totalBlocks - 1 ? index : index + 1;
 
+            setShowBlocksMenu(false)
             setBlockInFocus(newBlockPosition);
         }
 
@@ -71,6 +73,9 @@ export const EditableDiv = ({ value, index, totalBlocks, addBlock, deleteBlock, 
         const currentElement = e.currentTarget;
         const currentValue = currentElement.innerHTML;
 
+        const isBlocksMenuVisible = !isFormTitle && currentValue === '/'
+        setShowBlocksMenu(isBlocksMenuVisible)
+
         onChange && onChange({ blockId: value.id, payload: { data: currentValue } });
     };
 
@@ -81,6 +86,7 @@ export const EditableDiv = ({ value, index, totalBlocks, addBlock, deleteBlock, 
 
         currentElement.innerHTML = "";
         setCursorToEnd(currentElement);
+        setShowBlocksMenu(false)
         onChange && onChange({ blockId: value.id, payload: { data: "" }, type: blockType });
     };
 
@@ -119,7 +125,7 @@ export const EditableDiv = ({ value, index, totalBlocks, addBlock, deleteBlock, 
                 onInput={(e) => handleInput(e)}
             />
 
-            {showBlockTypeMenu && <FormBuilderMenu onClick={updateBlockTypeFromMenu} />}
+            {showBlocksMenu && <FormBuilderMenu onClick={updateBlockTypeFromMenu} />}
         </div>
     );
 };
