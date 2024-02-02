@@ -258,7 +258,6 @@ describe('EditableDiv', () => {
 
         const textOption = screen.getByText("Email")
         expect(textOption).toBeInTheDocument()
-        screen.debug()
 
         await userEvent.click(textOption)
         // we are checking the value of the second call because the first call is fired when user types / in the input
