@@ -24,7 +24,7 @@ const getDefaultTextInputData = ({ data, id }: TGetDefaultTextInputDataArgs = {}
 describe('EditableDiv', () => {
     it('render a input of type text and it accepts a value', async () => {
         render(
-            <EditableDiv totalBlocks={1} value={getDefaultTextInputData()} />
+            <EditableDiv index={0} totalBlocks={1} value={getDefaultTextInputData()} />
         )
 
         const editableDiv = document.getElementById("1")
@@ -49,7 +49,7 @@ describe('EditableDiv', () => {
         const addBlock = jest.fn()
 
         render(
-            <EditableDiv totalBlocks={1} value={getDefaultTextInputData()} addBlock={addBlock} />
+            <EditableDiv index={0} totalBlocks={1} value={getDefaultTextInputData()} addBlock={addBlock} />
         )
 
         const editableDiv = document.getElementById("1")
@@ -69,7 +69,7 @@ describe('EditableDiv', () => {
         const deleteBlock = jest.fn()
 
         render(
-            <EditableDiv totalBlocks={1} value={getDefaultTextInputData()} deleteBlock={deleteBlock} />
+            <EditableDiv index={0} totalBlocks={1} value={getDefaultTextInputData()} deleteBlock={deleteBlock} />
         )
 
         const editableDiv = document.getElementById("1")
@@ -99,11 +99,13 @@ describe('EditableDiv', () => {
         render(
             <>
                 <EditableDiv
+                    index={0}
                     totalBlocks={2}
                     value={getDefaultTextInputData({ id: "1", data: BLOCK_ONE_TEXT })}
                 />
 
                 <EditableDiv
+                    index={1}
                     totalBlocks={2}
                     value={getDefaultTextInputData({ id: "2", data: BLOCK_TWO_TEXT })}
                 />
@@ -134,11 +136,13 @@ describe('EditableDiv', () => {
         render(
             <>
                 <EditableDiv
+                    index={0}
                     totalBlocks={2}
                     value={getDefaultTextInputData({ id: "1", data: BLOCK_ONE_TEXT })}
                 />
 
                 <EditableDiv
+                    index={1}
                     totalBlocks={2}
                     value={getDefaultTextInputData({ id: "2", data: BLOCK_TWO_TEXT })}
                 />
@@ -170,6 +174,7 @@ describe('EditableDiv', () => {
 
         render(
             <EditableDiv
+                index={0}
                 totalBlocks={1}
                 value={getDefaultTextInputData({ id: "1", data: BLOCK_ONE_TEXT })}
             />
@@ -191,6 +196,7 @@ describe('EditableDiv', () => {
     it("show menu if the user enters only / character", async () => {
         render(
             <EditableDiv
+                index={0}
                 totalBlocks={1}
                 value={getDefaultTextInputData({ data: "/" })}
             />
@@ -212,6 +218,7 @@ describe('EditableDiv', () => {
 
         render(
             <EditableDiv
+                index={0}
                 totalBlocks={1}
                 value={getDefaultTextInputData({ data: "/" })}
                 onChange={updateBlock}

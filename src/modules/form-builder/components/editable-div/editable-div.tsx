@@ -9,15 +9,16 @@ import { setBlockInFocus, setCursorToEnd } from "../../utils/form-builder.utils"
 import { FormBuilderMenu } from "../form-builder-menu";
 
 type EditableDivProps = Pick<React.DOMAttributes<HTMLDivElement>, "onKeyDown"> & {
-    className?: string;
     value: TBlock;
+    index: number;
+    className?: string;
     totalBlocks: number
     addBlock?: TBlocksStore["addBlock"];
     deleteBlock?: TBlocksStore["removeBlock"];
     onChange?: TBlocksStore["updateBlock"];
 };
 
-export const EditableDiv = ({ value, totalBlocks, addBlock, deleteBlock, className, onChange, onKeyDown }: EditableDivProps) => {
+export const EditableDiv = ({ value, index, totalBlocks, addBlock, deleteBlock, className, onChange, onKeyDown }: EditableDivProps) => {
     const ref = useRef<HTMLDivElement>(null);
     const [prevKey, setPrevKey] = useState("");
 
@@ -32,13 +33,9 @@ export const EditableDiv = ({ value, totalBlocks, addBlock, deleteBlock, classNa
 
         const isValueEmpty = !currentValue || currentValue?.length === 0 || currentValue === "\n";
 
-        const elements = document.querySelectorAll("[contenteditable]");
-        const currentElementIndex = Array.from(elements).findIndex((el) => el.id === value.id);
-
-
         if (e.key === KeyCodesEnum.ENTER && !isPrevKeyShift) {
             e.preventDefault();
-            const newBlockPosition = currentElementIndex + 1;
+            const newBlockPosition = index + 1;
 
             addBlock && addBlock(newBlockPosition);
             return;
@@ -46,7 +43,7 @@ export const EditableDiv = ({ value, totalBlocks, addBlock, deleteBlock, classNa
 
         if (isValueEmpty && e.key === KeyCodesEnum.BACKSPACE && value.type !== BlockTypesEnum.FORM_TITLE) {
             e.preventDefault();
-            const previousElementIndex = currentElementIndex === 0 ? 0 : currentElementIndex - 1;
+            const previousElementIndex = index === 0 ? 0 : index - 1;
 
             setBlockInFocus(previousElementIndex);
             deleteBlock && deleteBlock(value.id);
@@ -54,14 +51,14 @@ export const EditableDiv = ({ value, totalBlocks, addBlock, deleteBlock, classNa
 
         if (e.key === KeyCodesEnum.ARROW_UP) {
             e.preventDefault();
-            const newBlockPosition = currentElementIndex === 0 ? 0 : currentElementIndex - 1;
+            const newBlockPosition = index === 0 ? 0 : index - 1;
 
             setBlockInFocus(newBlockPosition);
         }
 
         if (e.key === KeyCodesEnum.ARROW_DOWN) {
             e.preventDefault();
-            const newBlockPosition = currentElementIndex === totalBlocks - 1 ? currentElementIndex : currentElementIndex + 1;
+            const newBlockPosition = index === totalBlocks - 1 ? index : index + 1;
 
             setBlockInFocus(newBlockPosition);
         }

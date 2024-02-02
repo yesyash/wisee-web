@@ -26,9 +26,10 @@ export const FormBuilder = () => {
             <main>
                 <div className="pt-14 h-44 w-full"></div>
                 <div className="max-w-screen-lg px-4 mx-auto">
-                    {blocks.map(block => (
+                    {blocks.map((block, idx) => (
                         <EditableDiv
                             key={block.id}
+                            index={idx}
                             value={block}
                             addBlock={addBlock}
                             deleteBlock={deleteBlock}
